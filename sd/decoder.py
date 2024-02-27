@@ -1,14 +1,15 @@
 import torch
 import torch.nn as nn
 from torch.nn import functional as F
+from attention import SelfAttention
 
 
 class VAE_AttentionBlock(nn.Module):
-    def __inti__(self,channels,int):
+    def __init__(self,channels):
         super().__init__()
 
         self.groupnorm = nn.GroupNorm(32,channels)
-        self.attention = self.Attention(1,channels)
+        self.attention = SelfAttention(1,channels)
 
     def forward(self,x : torch.Tensor) -> torch.Tensor:
         residue = x
@@ -86,7 +87,7 @@ class VAE_Decoder(nn.Sequential):
 
             nn.Upsample(scale_factor=2),
 
-            nn.Conv2d(256,256,kernel_size=3,padding=1),            VAE_ResidualBlock(512,256),
+            nn.Conv2d(256,256,kernel_size=3,padding=1),
             VAE_ResidualBlock(256,128),
             VAE_ResidualBlock(128,128),
             VAE_ResidualBlock(128, 128),
